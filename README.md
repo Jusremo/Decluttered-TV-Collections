@@ -15,6 +15,7 @@ After
 
 ### Requirements/Limitations
 
+* Windows 10-11? Have to look into Linux compatibility
 * python-plexapi 4.15.7+ (installed by requirements.txt)
 * Base Smart Collection to pull from and format into a new collection (this must remain on plex, hiding it is fine, as long as it exists)
 * This slows down Sonarr importing, Sonarr waits for the script to finish for each import before moving on to the next. There are workarounds, I will include one soon.
