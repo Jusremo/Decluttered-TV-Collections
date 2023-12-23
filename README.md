@@ -13,6 +13,10 @@ After
  <img alt="YOUR-ALT-TEXT" src="https://i.imgur.com/13PJdgP.png">
 </picture>
 
+### How does it work?
+
+Essentially it just takes an existing smart collection, detects concurrent episodes and the amount of episodes per series, and formats it into a new one, based on the settings you've chosen.
+
 ### Requirements/Limitations
 
 * Windows 10-11? Have to look into Linux compatibility
