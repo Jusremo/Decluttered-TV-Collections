@@ -61,6 +61,7 @@ def Main():
     formattedNewCollection.visibility().updateVisibility(recommended=libraryRecommended, home=showOnHome, shared=friendsHome)
 
     if debugging: print("Finished")
+    exit(0)
 
 
 
