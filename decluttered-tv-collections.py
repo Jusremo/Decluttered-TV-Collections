@@ -19,8 +19,6 @@ else:
 
 configData = config["CONFIG"]
 
-# print(database_config["host"])
-
 debugging = configData.getboolean('debugging')
 plexHost = configData['plexHost']
 plexToken = configData['plexToken']
@@ -37,6 +35,9 @@ backToBackShowFirstAndLast = configData.getboolean('backToBackShowFirstAndLast')
 libraryRecommended = configData.getboolean('libraryRecommended') 
 showOnHome = configData.getboolean('showOnHome')
 friendsHome = configData.getboolean('friendsHome')
+backToBackExceptionOverridesLimit = configData.getboolean('backToBackExceptionOverridesLimit')
+alwaysShowLatestEpisodeFirst = configData.getboolean('alwaysShowLatestEpisodeFirst')
+
 
 plexServer = PlexServer(plexHost, plexToken)
 tvLibrary = plexServer.library.section(plexLibraryName)
@@ -82,46 +83,48 @@ def SearchForExistingCollections(collectionToFormatFrom, formattedNewCollection)
 def FormatFoundCollectionBaseIntoList():
     seriesShownAlreadyCount = {}
     epsShownAlready = {}
-    lastEpisodeKey = ""
+    prevEpShowKey = ""
     backToBackEpCount = 0
     itemsForNewCollection = []
 
     for curVid in collectionToFormatFrom:
         season = curVid.season()
-        key = curVid.show().key
+        showKey = curVid.show().key
         epToAppearInColl = None
+        isBackToBackException = False
 
-        if key not in seriesShownAlreadyCount: seriesShownAlreadyCount[key] = 0
+        if showKey not in seriesShownAlreadyCount: seriesShownAlreadyCount[showKey] = 0
     
-        epCount = seriesShownAlreadyCount[key] + 1
-        if lastEpisodeKey == key: backToBackEpCount += 1
+        seriesEpCount = seriesShownAlreadyCount[showKey] + 1
+        if prevEpShowKey == showKey: backToBackEpCount += 1
         else: backToBackEpCount = 0
 
-        if backToBackEpCount != backToBackException and backToBackException != 0:
-            if epCount > episodePerSeriesLimit: continue
+        if backToBackException != 0 and backToBackEpCount == backToBackException:
+            isBackToBackException = True
+
+        if not isBackToBackException or not backToBackExceptionOverridesLimit:
+            if seriesEpCount > episodePerSeriesLimit: continue
             if backToBackEpCount > backToBackEpLimit: continue
 
-        if backToBackEpCount == backToBackException and backToBackException != 0:
-            if backToBackShowFirstAndLast:
-                epToAppearInColl = season.episodes()[0] #try first episode
-            else: epToAppearInColl = curVid #try this episode
+        
+        if isBackToBackException and backToBackShowFirstAndLast:
+            epToAppearInColl = season.episodes()[0] #try first episode for back to back
+        else: 
+            if alwaysShowLatestEpisodeFirst:
+                epToAppearInColl = season.episodes()[-1] #try latest episode
+            # epToAppearInColl is None if not backToBack and alwaysShowLatest is false
 
-        else: epToAppearInColl = season.episodes()[-1] #try latest episode
-
-        if epToAppearInColl.key in epsShownAlready:
-            if epToAppearInColl.key in epsShownAlready:
-                epToAppearInColl = curVid #try this episode
-                if epToAppearInColl.key in epsShownAlready:
-                    continue #failure, show nothing
+        if epToAppearInColl == None or epToAppearInColl.key in epsShownAlready:
+            epToAppearInColl = curVid #try current episode
             
-        if epToAppearInColl.key in epsShownAlready: continue
+        if epToAppearInColl.key in epsShownAlready: continue # can't display an episode, continue
         
         if debugging: print(season.show().title + ' ' + epToAppearInColl.title)
 
         itemsForNewCollection.append(epToAppearInColl)
-        lastEpisodeKey = key
+        prevEpShowKey = showKey
         epsShownAlready[epToAppearInColl.key] = True
-        seriesShownAlreadyCount[key] += 1
+        seriesShownAlreadyCount[showKey] += 1
     return itemsForNewCollection
 
 def CreateNewFormattedCollection(plex, collectionToFormatFrom, formattedNewCollection, itemsForNewCollection):
