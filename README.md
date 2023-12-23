@@ -18,7 +18,7 @@ After
 * Windows 10-11? Have to look into Linux compatibility
 * python-plexapi 4.15.7+ (installed by requirements.txt)
 * Base Smart Collection to pull from and format into a new collection (this must remain on plex, hiding it is fine, as long as it exists)
-* This slows down Sonarr importing, Sonarr waits for the script to finish for each import before moving on to the next. There are workarounds, I will include one soon.
+* If connecting it to Sonarr importing, Sonarr waits for the script to finish for each import before moving on to the next. There are workarounds, I will include one soon.
 
 
 ### How to Use
@@ -27,7 +27,7 @@ After
 </details>
 
 <details>
-  <summary>    Create a smart collection for TV episodes sorted by your choice, LIMIT this to a number, (I use 150), or the script will take a while (click for example)</summary>
+  <summary>    Create a base smart collection to format episodes from, sorted by your choice, LIMIT this to a number, (I use 150), or the script will take a while (click for example)</summary>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/GzAw2eb.png">
     <source media="(prefers-color-scheme: light)" srcset="https://i.imgur.com/GzAw2eb.png">
@@ -44,7 +44,7 @@ After
 </details>
 
 <details>
-  <summary>  Optionally link to Sonarr (click for example</summary>
+  <summary>  Optionally connect to Sonarr (click for example</summary>
   <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/qMtU9l6.png">
    <source media="(prefers-color-scheme: light)" srcset="https://i.imgur.com/qMtU9l6.png">
