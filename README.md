@@ -56,7 +56,9 @@ After
 |-----------------------:|-----------|
 | collectionToFormatFrom | Name of collection to pull from, and format into the new collection, REQUIRED|
 | newFormattedCollectionName | Name of collection to create    |
-| episodePerSeriesLimit | How many episodes total per series are allowed in the entire collection, backToBackException can override this    |
-| backToBackEpLimit | This many back to back episodes BESIDES the first one, are allowed, so backToBackEpLimit=1 means 2 total episodes can appear back to back    |
-| backToBackException | If there"s this many additional episodes BESIDES the first episode, we"ll show the episode, set this to 0 to disable it    |
-| backToBackShowFirstAndLast | When the backtoback exception applies, show the last and first episode of the season instead of what should be there    |
+| episodePerSeriesLimit | How many episodes total per series are allowed in the entire collection, backToBackException can override this if enabled    |
+| backToBackEpLimit | This many back to back episodes BESIDES the first one, are allowed, so setting to 1 means 2 total episodes can appear back to back    |
+| backToBackException | If there's this many additional episodes BESIDES the first episode, we"ll show the episode, so setting to 4 means 5 episodes back to back will show 2 episodes (set this to 0 to disable it)    |
+| backToBackShowFirstAndLast | When the backtoback exception applies, show the first episode of the season instead of what should be there    |
+| backToBackExceptionOverridesLimit | When the backtoback exception applies, override the per-series limit    |
+| alwaysShowLatestEpisodeFirst | This will attempt to show the latest episode of the season in place of whatever episode is actually appearing, unless it's been shown already    |
