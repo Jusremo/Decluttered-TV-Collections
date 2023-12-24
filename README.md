@@ -59,7 +59,7 @@ This was the only way to circumvent the Sonarr wait.
 </details>
 
 <details>
-  <summary>  Optionally connect to Sonarr (click for example</summary>
+  <summary>  Optionally connect to Sonarr (using the .bat file if you're on Windows, click for example)</summary>
   <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/qMtU9l6.png">
    <source media="(prefers-color-scheme: light)" srcset="https://i.imgur.com/qMtU9l6.png">
