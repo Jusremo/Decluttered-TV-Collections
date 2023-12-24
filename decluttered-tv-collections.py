@@ -12,7 +12,8 @@ if exists:
     config = ConfigParser()
     config.read(config_filepath)
 else:
-    print("---------config.ini file not found at ", config_filepath)
+    print("---------config.ini file NOT FOUND at ", config_filepath)
+    exit(0)
 
 
 configData = config["CONFIG"]

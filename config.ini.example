@@ -16,6 +16,10 @@ backToBackShowFirstAndLast = True
 backToBackExceptionOverridesLimit = True                        
 alwaysShowLatestEpisodeFirst = True                        
 
+[SONARR]
+runDelayInSeconds = 90
+maxInstanceCount = 30
+
 # collectionToFormatFrom:                Name of collection to pull from, and format into the new collection, REQUIRED
 
 # newFormattedCollectionName:            Name of collection to create
@@ -31,3 +35,5 @@ alwaysShowLatestEpisodeFirst = True
 # backToBackExceptionOverridesLimit:     When the backtoback exception applies, override the per-series limit
 
 # alwaysShowLatestEpisodeFirst:          This will attempt to show the latest episode of the season in place of whatever episode is actually appearing, unless it's been shown already
+
+# maxInstanceCount:                      The Sonarr helper opens timer instances which check if there are other instances that have been opened after, if there are then they exit

@@ -1,5 +1,13 @@
+import asyncio
+from sys import exit
+from configparser import ConfigParser
 import os.path
-from subprocess import Popen, PIPE
+from plexapi.server import PlexServer
+import plexapi.library
+
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-process = Popen(['python.exe', dir_path + '\decluttered-tv-collections.py', '-d'], stdout=PIPE, stderr=PIPE)
+
+from subprocess import Popen, PIPE
+
+Popen(['python.exe', '-i', dir_path + '\decluttered-tv-collection-sonarr-delayer.py'], stdout=PIPE, stderr=PIPE)
