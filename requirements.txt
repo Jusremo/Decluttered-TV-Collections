@@ -1,1 +1,2 @@
-plexapi==4.15.7
+PlexAPI==4.15.7
+pywin32==306
