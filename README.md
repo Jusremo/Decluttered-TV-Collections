@@ -25,6 +25,17 @@ Essentially it just takes an existing smart collection, detects concurrent episo
 * If connecting it to Sonarr importing, Sonarr waits for the script to finish for each import before moving on to the next. There are workarounds, I will include one soon.
 
 
+#### Sonarr connect scripts work like so: 
+
+* Sonarr Connect  ->  
+* decluttered-tv-collections.bat  ->  
+* decluttered-tv-collections-sonarr.py  ->  
+* decluttered-tv-collection-sonarr-delayer.py  ->  
+* decluttered-tv-collections.py
+
+This was the only way to circumvent the Sonarr wait.
+
+
 ### How to Use
 <details>
   <summary> pip install -r requirements.txt </summary>
