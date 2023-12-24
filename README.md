@@ -22,7 +22,7 @@ Essentially it just takes an existing smart collection, detects concurrent episo
 * Windows 10-11? Have to look into Linux compatibility
 * python-plexapi 4.15.7+ (installed by requirements.txt)
 * Base Smart Collection to pull from and format into a new collection (this must remain on plex, hiding it is fine, as long as it exists)
-* If connecting it to Sonarr importing, Sonarr waits for the script to finish for each import before moving on to the next. There are workarounds, I will include one soon.
+* If connecting it to Sonarr importing, Sonarr normally waits for the script to finish for each import before moving on to the next. A workaround is included, as well as a single instance check delayer to prevent mass episode importing from spamming.
 
 
 #### Sonarr connect scripts work like so: 
