@@ -76,9 +76,12 @@ def SearchForExistingCollections(collectionToFormatFrom, formattedNewCollection)
 
     collectionToFormatFrom = tvLibrary.collection(title=collectionToFormatName)
 
-    if debugging:
-        print('collectionToFormatFrom: ' + collectionToFormatFrom.title)
-        print('formattedNewCollection: ' + formattedNewCollection.title)
+    if collectionToFormatFrom: print('Base Smart Collection Found: ' + collectionToFormatFrom.title)
+    else:
+        print("Base Smart Collection to Format From Not Found, You must create a smart collection on Plex to format from, and place its name in the config")
+        exit(0)
+
+    if formattedNewCollection: print('Decluttered Collection Found, updating: ' + formattedNewCollection.title)
 
     return collectionToFormatFrom, formattedNewCollection
 
