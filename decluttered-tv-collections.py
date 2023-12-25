@@ -69,11 +69,20 @@ def Main():
 def SearchForExistingCollections(collectionToFormatFrom, formattedNewCollection):
     tvCollectionSearch = tvLibrary.collections(title=newFormattedCollectionName)
 
+    foundCollection = None
+    tagToFind = newFormattedCollectionName + ' declut'
+
     for collection in tvCollectionSearch:
         for label in collection.labels:
-            if label.tag == newFormattedCollectionName:
-                formattedNewCollection = collection
+            if label.tag == tagToFind:
+                if not foundCollection: 
+                    foundCollection = collection
+                else:
+                    if collection != foundCollection:
+                        collection.delete()
+                        if debugging: print('Deleted duplicate collection')
 
+    formattedNewCollection = foundCollection
     collectionToFormatFrom = tvLibrary.collection(title=collectionToFormatName)
 
     if collectionToFormatFrom: print('Base Smart Collection Found: ' + collectionToFormatFrom.title)
@@ -136,7 +145,7 @@ def CreateNewFormattedCollection(plex, collectionToFormatFrom, formattedNewColle
     formattedNewCollection = collectionToFormatFrom.create(plex, newFormattedCollectionName, 'TV Shows', items=itemsForNewCollection, smart=False, limit=None, libtype=None, sort=None, filters=None)
     formattedNewCollection.sortUpdate(sort="custom")
     formattedNewCollection.modeUpdate(mode="hide")
-    formattedNewCollection.addLabel(newFormattedCollectionName)
+    formattedNewCollection.addLabel(newFormattedCollectionName + ' declut')
     formattedNewCollection.editSortTitle('  ' + newFormattedCollectionName)
     return formattedNewCollection
 
