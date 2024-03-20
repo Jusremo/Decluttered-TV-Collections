@@ -2,23 +2,34 @@ from sys import exit
 from configparser import ConfigParser
 import os.path
 from plexapi.server import PlexServer
+import logging
+
+logger = logging.getLogger('decluttered-tv-collections')
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('decluttered-tv-collections.log')
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+
+def Log(logString):
+    print(logString)
+    logger.warning(logString)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_filepath = dir_path+"/config.ini"
 exists = os.path.exists(config_filepath)
 config = None
 if exists:
-    print("--------config.ini file found at ", config_filepath)
+    Log("--------config.ini file found at " + config_filepath)
     config = ConfigParser()
     config.read(config_filepath)
 else:
-    print("---------config.ini file NOT FOUND at ", config_filepath)
+    Log("---------config.ini file NOT FOUND at " + config_filepath)
     exit(0)
-
 
 configData = config["CONFIG"]
 
 debugging = configData.getboolean('debugging')
+testOpenCalc = configData.getboolean('testOpenCalc')
 plexHost = configData['plexHost']
 plexToken = configData['plexToken']
 plexLibraryName = configData['plexLibraryName']
@@ -54,19 +65,20 @@ def Main():
     if not formattedNewCollection:
         formattedNewCollection = CreateNewFormattedCollection(plexServer, collectionToFormatFrom, formattedNewCollection, formattedItemsForCollection)
     else:
-        formattedNewCollection = UpdateFormattedCollection(formattedNewCollection, formattedItemsForCollection)
+        formattedNewCollection = UpdateExistingFormattedCollection(formattedNewCollection, formattedItemsForCollection)
 
     formattedNewCollection.visibility().updateVisibility(recommended=False, home=False, shared=False)
     SortFormattedCollection(formattedNewCollection, formattedItemsForCollection)
     formattedNewCollection.visibility().updateVisibility(recommended=libraryRecommended, home=showOnHome, shared=friendsHome)
 
-    if debugging: print("Finished")
+    if debugging: Log("Finished")
     exit(0)
 
 
 
 
 def SearchForExistingCollections(collectionToFormatFrom, formattedNewCollection):
+    if debugging: Log('Searching For Existing Collections')
     tvCollectionSearch = tvLibrary.collections(title=newFormattedCollectionName)
 
     foundCollection = None
@@ -80,27 +92,30 @@ def SearchForExistingCollections(collectionToFormatFrom, formattedNewCollection)
                 else:
                     if collection != foundCollection:
                         collection.delete()
-                        if debugging: print('Deleted duplicate collection')
+                        if debugging: Log('  Deleted duplicate collection')
 
     formattedNewCollection = foundCollection
     collectionToFormatFrom = tvLibrary.collection(title=collectionToFormatName)
 
-    if collectionToFormatFrom: print('Base Smart Collection Found: ' + collectionToFormatFrom.title)
+    if collectionToFormatFrom: Log('  Base Smart Collection Found: ' + collectionToFormatFrom.title)
     else:
-        print("Base Smart Collection to Format From Not Found, You must create a smart collection on Plex to format from, and place its name in the config")
+        Log("Base Smart Collection to Format From Not Found, You must create a smart collection on Plex to format from, and place its name in the config")
         exit(0)
 
-    if formattedNewCollection: print('Decluttered Collection Found, updating: ' + formattedNewCollection.title)
+    if formattedNewCollection: Log('  Decluttered Collection Found, updating: ' + formattedNewCollection.title)
 
     return collectionToFormatFrom, formattedNewCollection
 
 def FormatFoundCollectionBaseIntoList():
+    if debugging: 
+        Log('Formatting Found Collection Base "' + collectionToFormatFrom.title + '" Into List')
+        Log('  Adding the following entries to list:')
     seriesShownAlreadyCount = {}
     epsShownAlready = {}
     prevEpShowKey = ""
     backToBackEpCount = 0
     itemsForNewCollection = []
-
+    
     for curVid in collectionToFormatFrom:
         season = curVid.season()
         showKey = curVid.show().key
@@ -133,7 +148,7 @@ def FormatFoundCollectionBaseIntoList():
             
         if epToAppearInColl.key in epsShownAlready: continue # can't display an episode, continue
         
-        if debugging: print(season.show().title + ' ' + epToAppearInColl.title)
+        if debugging: Log('    "' + season.show().title + ' - ' + epToAppearInColl.title + '"')
 
         itemsForNewCollection.append(epToAppearInColl)
         prevEpShowKey = showKey
@@ -142,6 +157,8 @@ def FormatFoundCollectionBaseIntoList():
     return itemsForNewCollection
 
 def CreateNewFormattedCollection(plex, collectionToFormatFrom, formattedNewCollection, itemsForNewCollection):
+    if debugging: Log('Creating New Formatted Collection "' + newFormattedCollectionName + '"')
+
     formattedNewCollection = collectionToFormatFrom.create(plex, newFormattedCollectionName, 'TV Shows', items=itemsForNewCollection, smart=False, limit=None, libtype=None, sort=None, filters=None)
     formattedNewCollection.sortUpdate(sort="custom")
     formattedNewCollection.modeUpdate(mode="hide")
@@ -149,8 +166,10 @@ def CreateNewFormattedCollection(plex, collectionToFormatFrom, formattedNewColle
     formattedNewCollection.editSortTitle('  ' + newFormattedCollectionName)
     return formattedNewCollection
 
-def UpdateFormattedCollection(formattedNewCollection, itemsForNewCollection):
+def UpdateExistingFormattedCollection(formattedNewCollection, itemsForNewCollection):
+    if debugging: Log('Updating Existing Formatted Collection "' + formattedNewCollection.title + '" With New List')
     tvLibrary.batchMultiEdits(formattedNewCollection.items())
+
     tvLibrary.removeCollection(newFormattedCollectionName)
     tvLibrary.saveMultiEdits()
 
@@ -161,6 +180,8 @@ def UpdateFormattedCollection(formattedNewCollection, itemsForNewCollection):
     return formattedNewCollection
 
 def SortFormattedCollection(formattedNewCollection, itemsForNewCollection):
+    if debugging: Log('Sorting Formatted Collection On Plex')
+
     lastEpSorted = None
     for episode in itemsForNewCollection:
         if not lastEpSorted: 
@@ -168,5 +189,8 @@ def SortFormattedCollection(formattedNewCollection, itemsForNewCollection):
             continue
         formattedNewCollection.moveItem(episode, after=lastEpSorted)
         lastEpSorted = episode
+
+
+    
 
 Main()
