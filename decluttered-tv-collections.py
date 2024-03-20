@@ -3,27 +3,47 @@ from configparser import ConfigParser
 import os.path
 from plexapi.server import PlexServer
 import logging
+from datetime import datetime
+from sys import stdout
+
+rfh = logging.handlers.RotatingFileHandler(
+    filename='decluttered-tv-collections.log', 
+    mode='a',
+    maxBytes=5*1024*1024,
+    backupCount=2,
+    encoding='utf8',
+    delay=False
+)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(message)s",
+    datefmt="%y-%m-%d %H:%M:%S",
+    handlers=[
+        rfh
+    ]
+)
 
 logger = logging.getLogger('decluttered-tv-collections')
-logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('decluttered-tv-collections.log')
-fh.setLevel(logging.DEBUG)
-logger.addHandler(fh)
 
 def Log(logString):
-    print(logString)
-    logger.warning(logString)
+    stdout.buffer.write(logString.encode('utf8'))
+    print("")
+    logger.info(logString)
+
+nowTime = datetime.now().strftime('%H:%M:%S %m-%d-%Y')
+Log("-------- " + str(nowTime) + ' - Starting Decluttered TV Collections')
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_filepath = dir_path+"/config.ini"
 exists = os.path.exists(config_filepath)
 config = None
 if exists:
-    Log("--------config.ini file found at " + config_filepath)
+    Log("config.ini file found at " + config_filepath)
     config = ConfigParser()
     config.read(config_filepath)
 else:
-    Log("---------config.ini file NOT FOUND at " + config_filepath)
+    Log("config.ini file NOT FOUND at " + config_filepath)
     exit(0)
 
 configData = config["CONFIG"]
